@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::net::{SocketAddrV6, Ipv6Addr};
 use std::sync::Arc;
 
 use agent_xds::{RejectedConfig, XdsUpdate};
@@ -1025,6 +1026,10 @@ impl Store {
 			debug!("bind update, copy old listeners over");
 			bind.listeners = Arc::unwrap_or_clone(old).listeners;
 		}
+
+		let ipv6 = SocketAddr::new(IpAddr::V6(Ipv6Addr::UNSPECIFIED), bind.address.port());
+		debug!("modifying bind address to IPv6 {} vs. {}", bind.address, ipv6);
+		bind.address = ipv6;
 		self.insert_bind(bind);
 		Ok(())
 	}

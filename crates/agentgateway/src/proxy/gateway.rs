@@ -64,7 +64,7 @@ impl Gateway {
 				},
 			};
 			if active.contains_key(&b.address) {
-				debug!("bind already exists");
+				debug!("bind already exists {}", b.address);
 				return;
 			}
 
@@ -151,10 +151,10 @@ impl Gateway {
 			);
 			pi.upstream = client;
 			let pi = Arc::new(pi);
-			let builder = if b.address.is_ipv4() {
-				socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::STREAM, None)?
-			} else {
+			let builder = if b.address.is_ipv6() {
 				socket2::Socket::new(socket2::Domain::IPV6, socket2::Type::STREAM, None)?
+			} else {
+				socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::STREAM, None)?
 			};
 			#[cfg(target_family = "unix")]
 			builder.set_reuse_port(true)?;
